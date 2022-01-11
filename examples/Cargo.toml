@@ -1,0 +1,11 @@
+[package]
+name = "examples"
+version = "0.0.0"
+authors = ["arcnmx"]
+edition = "2018"
+
+[dependencies]
+glib-signal = { version = "0.1", features = ["enable-futures"], path = "../" }
+futures = "0.3"
+glib = "0.14"
+ctrlc = { version = "3.0", features = ["termination"] }

@@ -1,0 +1,32 @@
+[package]
+name = "glib-signal"
+version = "0.1.0"
+authors = ["arcnmx"]
+edition = "2018"
+
+description = "GObject signal bindings"
+keywords = ["glib", "gobject", "signal", "async", "futures"]
+
+documentation = "http://docs.rs/glib-signals/"
+repository = "https://github.com/arcnmx/glib-signals.rs"
+readme = "README.md"
+license = "MIT"
+
+[package.metadata.docs.rs]
+features = ["dox"]
+
+[badges]
+maintenance = { status = "passively-maintained" }
+
+[dependencies]
+glib = "0.14"
+futures-core = { version = "0.3", optional = true }
+futures-channel = { version = "0.3", optional = true }
+
+[features]
+default = []
+enable-futures = ["futures-channel", "futures-core"]
+dox = ["glib/dox"]
+
+[workspace]
+members = ["examples"]
