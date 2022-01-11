@@ -1,11 +1,11 @@
-use examples::*;
+use examples::TestObject;
 use futures::StreamExt;
 use glib::MainLoop;
 use glib_signal::ObjectSignalExt;
 
 async fn main_async(mainloop: MainLoop) {
 	let obj = TestObject::new();
-	let mut stream = obj.clone().signal_stream(TestObjectSomething);
+	let mut stream = obj.signal_stream(TestObject::SIGNAL_SOMETHING);
 
 	let arg = "hello";
 	obj.something(arg, false);

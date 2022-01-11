@@ -73,6 +73,7 @@ glib_signal::def_signal! {
 
 glib_signal::def_signal! {
 	impl Notifies<"something" as TestObjectSomething> for TestObject {
+		impl {const SIGNAL_SOMETHING};
 		FLAGS = SignalFlags::DETAILED;
 		fn(&self, String) -> u64
 	}
