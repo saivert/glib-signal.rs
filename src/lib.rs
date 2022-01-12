@@ -58,13 +58,13 @@ pub trait DetailedSignal: Copy + Debug + Into<ConnectDetails<Self>> {
 
 	fn detail() -> Option<Quark> {
 		match Self::DETAIL {
-			Some(detail) => Some(Quark::try_string(detail).expect(detail)),
+			Some(detail) => Some(Quark::try_from_str(detail).expect(detail)),
 			None => None,
 		}
 	}
 
 	fn create_detail() -> Quark {
-		Quark::from_string(Self::DETAIL.expect("detail string required"))
+		Quark::from_str(Self::DETAIL.expect("detail string required"))
 	}
 }
 
@@ -172,11 +172,6 @@ impl<S: Signal> ConnectDetails<S> {
 impl ConnectDetails<()> {
 	pub fn with_name<O: StaticType>(signal: &str, after: bool) -> Option<Self> {
 		let (signal, detail) = SignalId::parse_name(signal, O::static_type(), false)?;
-		let detail = match detail.into_glib() {
-			// TODO: remove once https://github.com/gtk-rs/gtk-rs-core/issues/462 is resolved
-			0 => None,
-			_ => Some(detail),
-		};
 		Some(unsafe {
 			Self::with_parts(signal, detail, after)
 		})

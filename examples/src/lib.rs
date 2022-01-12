@@ -43,14 +43,10 @@ impl TestObject {
 		use glib::ObjectExt;
 		let s = s.to_value();
 		let something = TestObjectSomething::signal();
-		let res = if else_ {
+		if else_ {
 			self.emit_with_details(something, TestObjectSomethingElse::create_detail(), &[&s])
 		} else {
 			self.emit(something, &[&s])
-		};
-		match res.unwrap() {
-			None => unreachable!(),
-			Some(res) => res.get().unwrap(),
 		}
 	}
 
@@ -58,8 +54,7 @@ impl TestObject {
 		use glib::ObjectExt;
 		let s = s.to_value();
 		let nothing = TestObjectNothing::signal();
-		let res = self.emit(nothing, &[&s]).unwrap();
-		debug_assert!(res.is_none());
+		self.emit(nothing, &[&s])
 	}
 }
 
@@ -94,7 +89,7 @@ impl BuildSignal for TestObjectSomething {
 	fn build() -> glib::subclass::Signal {
 		Self::builder(|b| b
 			.accumulator(|cx, lhs, rhs| {
-				if cx.detail() == TestObjectSomethingElse::create_detail() {
+				if cx.detail() == Some(TestObjectSomethingElse::create_detail()) {
 					*lhs = (lhs.get::<u64>().unwrap() + rhs.get::<u64>().unwrap() * 2).to_value();
 				} else {
 					*lhs = (lhs.get::<u64>().unwrap() + rhs.get::<u64>().unwrap()).to_value();

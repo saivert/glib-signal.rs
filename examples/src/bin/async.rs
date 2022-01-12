@@ -19,15 +19,14 @@ async fn main_async(mainloop: MainLoop) {
 fn main() {
 	let mainloop = MainLoop::new(None, false);
 	let context = mainloop.context();
-	context.push_thread_default();
+	context.with_thread_default(|| {
+		ctrlc::set_handler({
+			let mainloop = mainloop.clone();
+			move || mainloop.quit()
+		}).unwrap();
 
-	ctrlc::set_handler({
-		let mainloop = mainloop.clone();
-		move || mainloop.quit()
+		context.spawn_local(main_async(mainloop.clone()));
+
+		mainloop.run();
 	}).unwrap();
-
-	context.spawn_local(main_async(mainloop.clone()));
-
-	mainloop.run();
-	context.pop_thread_default();
 }
