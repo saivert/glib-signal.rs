@@ -1,4 +1,4 @@
-#![cfg_attr(feature = "dox", feature(doc_notable_trait))]
+#![cfg_attr(feature = "dox", feature(doc_notable_trait, doc_cfg))]
 
 use glib::subclass::SignalId;
 use glib::subclass::signal::SignalBuilder;
