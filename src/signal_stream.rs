@@ -70,6 +70,14 @@ impl<O: ObjectType, T> SignalStream<O, T> {
 			ptr::read(&this.target)
 		}
 	}
+
+	pub fn target(&self) -> &WeakRef<O> {
+		&self.target
+	}
+
+	pub fn attach_target(self) -> SignalStreamSelf<O, T> {
+		SignalStreamSelf::from(self)
+	}
 }
 
 impl<O: ObjectType, T> Stream for SignalStream<O, T> {
@@ -164,5 +172,38 @@ impl<O: ObjectType, T> Future for OnceFuture<O, T> {
 impl<O: ObjectType, T> FusedFuture for OnceFuture<O, T> {
 	fn is_terminated(&self) -> bool {
 		self.stream.as_ref().map(|s| s.is_terminated()).unwrap_or(true)
+	}
+}
+
+pub struct SignalStreamSelf<O: ObjectType, T> {
+	inner: SignalStream<O, T>,
+}
+
+impl<O: ObjectType, T> From<SignalStream<O, T>> for SignalStreamSelf<O, T> {
+	fn from(inner: SignalStream<O, T>) -> Self {
+		Self {
+			inner,
+		}
+	}
+}
+
+impl<O: ObjectType, T> Stream for SignalStreamSelf<O, T> {
+	type Item = (Option<O>, T);
+
+	fn poll_next(self: Pin<&mut Self>, cx: &mut std::task::Context<'_>) -> Poll<Option<Self::Item>> {
+		let mut inner = unsafe { self.map_unchecked_mut(|s| &mut s.inner) };
+		Poll::Ready(ready!(inner.as_mut().poll_next(cx))
+			.map(|res| (inner.target().upgrade(), res))
+		)
+	}
+
+	fn size_hint(&self) -> (usize, Option<usize>) {
+		self.inner.size_hint()
+	}
+}
+
+impl<O: ObjectType, T> FusedStream for SignalStreamSelf<O, T> {
+	fn is_terminated(&self) -> bool {
+		self.inner.is_terminated()
 	}
 }
