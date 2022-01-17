@@ -7,5 +7,5 @@ edition = "2018"
 [dependencies]
 glib-signal = { version = "0.1", features = ["enable-futures"], path = "../" }
 futures = "0.3"
-glib = { version = "0.15", git = "https://github.com/gtk-rs/gtk-rs-core" }
+glib = { git = "https://github.com/gtk-rs/gtk-rs-core" }
 ctrlc = { version = "3.0", features = ["termination"] }
