@@ -1,5 +1,5 @@
 use glib::{Type, StaticType, Value};
-use glib::value::{FromValue, ValueTypeChecker, ValueTypeMismatchOrNoneError};
+use glib::value::{FromValue, ValueTypeChecker, ValueTypeMismatchOrNoneError, ValueTypeMismatchError};
 use std::error::Error;
 
 pub trait FromValues<'a> {
@@ -15,9 +15,9 @@ macro_rules! impl_signal_arguments {
 		#[allow(non_snake_case)]
 		impl<'a, $($tx,)*> FromValues<'a> for ($($tx, )*) where
 			$($tx: FromValue<'a> + StaticType,)*
-			$(ValueTypeMismatchOrNoneError: From<<$tx::Checker as ValueTypeChecker>::Error>,)*
+			$(ValueTypeMismatchOrNoneError<ValueTypeMismatchError>: From<<$tx::Checker as ValueTypeChecker>::Error>,)*
 		{
-			type Error = ValueTypeMismatchOrNoneError;
+			type Error = ValueTypeMismatchOrNoneError<ValueTypeMismatchError>;
 			type Types = [Type; $count];
 
 			fn from_values(args: &'a [Value]) -> Result<Self, Self::Error> {
