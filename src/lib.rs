@@ -85,11 +85,9 @@ impl<T: Signal> BuildableSignal for T where
 	<Self::Return as ToValueOption>::Type: StaticType
 {
 	fn builder<F: FnOnce(SignalBuilder) -> glib::subclass::Signal>(f: F) -> glib::subclass::Signal {
-		let return_type = <<Self::Return as ToValueOption>::Type as StaticType>::static_type().into();
-		let argument_types: Vec<_> = <Self::Arguments as FromValues>::static_types()
-			.into_iter().map(From::from)
-			.collect();
-		let builder = glib::subclass::Signal::builder(Self::NAME, &argument_types, return_type)
+		let builder = glib::subclass::Signal::builder(Self::NAME)
+			.param_types(<Self::Arguments as FromValues>::static_types())
+			.return_type::<<Self::Return as ToValueOption>::Type>()
 			.flags(Self::FLAGS);
 		f(builder)
 	}

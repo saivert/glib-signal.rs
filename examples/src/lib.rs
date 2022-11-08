@@ -36,7 +36,7 @@ glib::wrapper! {
 
 impl TestObject {
 	pub fn new() -> Self {
-		glib::Object::new(&[]).unwrap()
+		glib::Object::new(&[])
 	}
 
 	pub fn something(&self, s: &str, else_: bool) -> u64 {

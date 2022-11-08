@@ -19,7 +19,7 @@ features = ["dox"]
 maintenance = { status = "passively-maintained" }
 
 [dependencies]
-glib = { git = "https://github.com/gtk-rs/gtk-rs-core" }
+glib = { version = "0.16" }
 futures-core = { version = "0.3", optional = true }
 futures-channel = { version = "0.3", optional = true }
 
