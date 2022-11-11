@@ -26,6 +26,7 @@ in {
     tasks = {
       build.inputs = [
         (cargo "build" "build")
+        (cargo "build-futures" "build -F futures")
         (cargo "test" "test --workspace")
         (cargo "example-async" "run -p examples --bin async")
       ];

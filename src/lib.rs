@@ -10,9 +10,9 @@ use glib::value::FromValue;
 use std::fmt::Debug;
 use std::marker::PhantomData;
 
-#[cfg(feature = "futures-channel")]
+#[cfg(feature = "futures")]
 mod signal_stream;
-#[cfg(feature = "futures-channel")]
+#[cfg(feature = "futures")]
 pub use signal_stream::{SignalStream, OnceFuture, ConnectEof};
 
 mod borrowed_object;
@@ -198,7 +198,7 @@ pub trait ObjectSignalExt: ObjectType {
 		S_: Into<ConnectDetails<S>>,
 		Self: Notifies<S::Signal>;
 
-	#[cfg(feature = "futures-channel")]
+	#[cfg(feature = "futures")]
 	fn signal_stream<S, S_>(&self, signal: S_) -> SignalStream<Self, S::Arguments> where
 		S: DetailedSignal,
 		S_: Into<ConnectDetails<S>>,
@@ -245,7 +245,7 @@ impl<O: ObjectType> ObjectSignalExt for O where
 		self.disconnect(handle)
 	}
 
-	#[cfg(feature = "futures-channel")]
+	#[cfg(feature = "futures")]
 	fn signal_stream<S, S_>(&self, signal: S_) -> SignalStream<Self, S::Arguments> where
 		S: DetailedSignal,
 		S_: Into<ConnectDetails<S>>,

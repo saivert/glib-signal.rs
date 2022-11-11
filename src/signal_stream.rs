@@ -11,7 +11,7 @@ use std::future::Future;
 use crate::{ConnectDetails, FromValues, ToValueOption, BorrowedObject, DetailedSignal, ObjectSignalExt};
 
 #[must_use]
-#[cfg_attr(feature = "dox", doc(cfg(feature = "futures-channel")))]
+#[cfg_attr(feature = "dox", doc(cfg(feature = "futures")))]
 #[derive(Debug)]
 pub struct SignalStream<O: ObjectType, T> {
 	rx: mpsc::UnboundedReceiver<T>,

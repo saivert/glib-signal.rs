@@ -5,7 +5,7 @@ authors = ["arcnmx"]
 edition = "2018"
 
 [dependencies]
-glib-signal = { version = "0.1", features = ["enable-futures"], path = "../" }
+glib-signal = { version = "0.1", features = ["futures"], path = "../" }
 futures = "0.3"
 glib = { version = "0.16" }
 ctrlc = { version = "3.0", features = ["termination"] }
