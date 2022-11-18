@@ -1,7 +1,7 @@
-use glib::{Value, StaticType, Type};
-use glib::value::FromValue;
-use glib::translate::ToGlibPtr;
-use std::ops::Deref;
+use {
+	glib::{translate::ToGlibPtr, value::FromValue, StaticType, Type, Value},
+	std::ops::Deref,
+};
 
 #[derive(Copy, Clone, Debug)]
 #[repr(transparent)]

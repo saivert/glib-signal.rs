@@ -1,9 +1,11 @@
-use glib::{Value, StaticType, ObjectType, Type};
-use glib::value::FromValue;
-use glib::translate::{ToGlibPtr, FromGlibPtrBorrow, from_glib_borrow};
-use std::marker::PhantomData;
-use std::mem::ManuallyDrop;
-use std::ops::Deref;
+use {
+	glib::{
+		translate::{from_glib_borrow, FromGlibPtrBorrow, ToGlibPtr},
+		value::FromValue,
+		ObjectType, StaticType, Type, Value,
+	},
+	std::{marker::PhantomData, mem::ManuallyDrop, ops::Deref},
+};
 
 #[derive(Debug)]
 #[repr(transparent)]
@@ -29,9 +31,7 @@ impl<'a, O> BorrowedObject<'a, O> {
 impl<'a, O: ObjectType> BorrowedObject<'a, O> {
 	/// Copy this reference
 	pub fn copy_ref(&self) -> Self {
-		unsafe {
-			std::ptr::read(self)
-		}
+		unsafe { std::ptr::read(self) }
 	}
 }
 
@@ -54,7 +54,8 @@ unsafe impl<'a, O: ObjectType + FromGlibPtrBorrow<*mut O::GlibType>> FromValue<'
 
 	unsafe fn from_value(value: &'a Value) -> Self {
 		let value = value.to_glib_none();
-		let borrowed: glib::translate::Borrowed<O> = from_glib_borrow(glib::gobject_ffi::g_value_get_object(value.0) as *mut O::GlibType);
+		let borrowed: glib::translate::Borrowed<O> =
+			from_glib_borrow(glib::gobject_ffi::g_value_get_object(value.0) as *mut O::GlibType);
 		Self::forget(borrowed.into_inner())
 	}
 }

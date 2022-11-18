@@ -46,6 +46,15 @@
       default = { outputs'devShells }: outputs'devShells.plain;
     };
     checks = {
+      rustfmt = { rustfmt, cargo, runCommand }: runCommand "cargo-fmt-check" {
+        nativeBuildInputs = [ cargo (rustfmt.override { asNightly = true; }) ];
+        src = self;
+        meta.name = "cargo fmt";
+      } ''
+        cargo fmt --check \
+          --manifest-path $src/Cargo.toml
+        touch $out
+      '';
       test = { outputs'devShells'plain, rustPlatform }: rustPlatform.buildRustPackage {
         pname = self.lib.cargoToml.package.name;
         inherit (self.lib.cargoToml.package) version;

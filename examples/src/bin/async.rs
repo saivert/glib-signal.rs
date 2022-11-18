@@ -1,7 +1,4 @@
-use examples::TestObject;
-use futures::StreamExt;
-use glib::MainLoop;
-use glib_signal::ObjectSignalExt;
+use {examples::TestObject, futures::StreamExt, glib::MainLoop, glib_signal::ObjectSignalExt};
 
 async fn main_async(mainloop: MainLoop) {
 	let obj = TestObject::new();
@@ -19,14 +16,17 @@ async fn main_async(mainloop: MainLoop) {
 fn main() {
 	let mainloop = MainLoop::new(None, false);
 	let context = mainloop.context();
-	context.with_thread_default(|| {
-		ctrlc::set_handler({
-			let mainloop = mainloop.clone();
-			move || mainloop.quit()
-		}).unwrap();
+	context
+		.with_thread_default(|| {
+			ctrlc::set_handler({
+				let mainloop = mainloop.clone();
+				move || mainloop.quit()
+			})
+			.unwrap();
 
-		context.spawn_local(main_async(mainloop.clone()));
+			context.spawn_local(main_async(mainloop.clone()));
 
-		mainloop.run();
-	}).unwrap();
+			mainloop.run();
+		})
+		.unwrap();
 }

@@ -18,7 +18,8 @@
 ///
 /// - [Notifies<`SignalType`>](crate::Notifies) for `AnObject`
 /// - [Signal](crate::Signal) for `SignalType`
-/// - [BuildSignal](crate::BuildSignal) for `SignalType`, for use with [glib::ObjectImpl](glib::subclass::object::ObjectImpl::signals) (opt-in)
+/// - [BuildSignal](crate::BuildSignal) for `SignalType`, for use with
+///   [glib::ObjectImpl](glib::subclass::object::ObjectImpl::signals) (opt-in)
 #[macro_export]
 macro_rules! impl_signal {
 	(impl Notifies<$signal_str:literal as $signal:path> for $obj:path {

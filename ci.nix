@@ -9,6 +9,7 @@ in {
       nixpkgs = "22.11";
     };
     tasks = {
+      rustfmt.inputs = singleton checks.rustfmt;
       build.inputs = singleton checks.test;
       example.inputs = [
         checks.example-async

@@ -1,39 +1,41 @@
 #![doc(html_root_url = "https://docs.rs/glib-signal/0.1.0")]
 #![cfg_attr(feature = "dox", feature(doc_notable_trait, doc_cfg))]
 
-use glib::subclass::SignalId;
-use glib::subclass::signal::SignalBuilder;
-use glib::translate::{ToGlibPtr, IntoGlib};
-use glib::{SignalHandlerId, Quark, StaticType, Closure, BoolError};
-use glib::{ObjectType, ObjectExt};
-use glib::translate::from_glib;
-use glib::value::FromValue;
-use std::fmt::Debug;
-use std::marker::PhantomData;
+#[cfg(feature = "futures")]
+pub use self::signal_stream::{ConnectEof, OnceFuture, SignalStream};
+#[doc(hidden)]
+pub use glib; // for macro use
+pub use {
+	self::{
+		borrowed_object::BorrowedObject,
+		from_values::FromValues,
+		pointer::Pointer,
+		value_option::{PrimitiveValue, ToValueOption},
+	},
+	glib::SignalFlags,
+};
+use {
+	glib::{
+		subclass::{signal::SignalBuilder, SignalId},
+		translate::{from_glib, IntoGlib, ToGlibPtr},
+		value::FromValue,
+		BoolError, Closure, ObjectExt, ObjectType, Quark, SignalHandlerId, StaticType,
+	},
+	std::{fmt::Debug, marker::PhantomData},
+};
 
 #[cfg(feature = "futures")]
 mod signal_stream;
-#[cfg(feature = "futures")]
-pub use signal_stream::{SignalStream, OnceFuture, ConnectEof};
 
 mod borrowed_object;
-pub use borrowed_object::BorrowedObject;
 
 mod pointer;
-pub use pointer::Pointer;
 
 mod value_option;
-pub use value_option::{ToValueOption, PrimitiveValue};
 
 mod from_values;
-pub use from_values::FromValues;
 
 mod macros;
-
-#[doc(hidden)]
-pub use glib; // for macro use
-
-pub use glib::SignalFlags;
 
 pub trait Signal: Copy + Debug {
 	type Object: ObjectType;
@@ -44,8 +46,7 @@ pub trait Signal: Copy + Debug {
 	const FLAGS: SignalFlags = SignalFlags::empty();
 
 	fn signal() -> SignalId {
-		SignalId::lookup(Self::NAME, <Self::Object as StaticType>::static_type())
-			.expect(Self::NAME)
+		SignalId::lookup(Self::NAME, <Self::Object as StaticType>::static_type()).expect(Self::NAME)
 	}
 }
 
@@ -70,10 +71,10 @@ pub trait DetailedSignal: Copy + Debug + Into<ConnectDetails<Self>> {
 }
 
 impl<T: Signal> DetailedSignal for T {
-	type Signal = Self;
-	type Object = <Self::Signal as Signal>::Object;
 	type Arguments = <Self::Signal as Signal>::Arguments;
+	type Object = <Self::Signal as Signal>::Object;
 	type Return = <Self::Signal as Signal>::Return;
+	type Signal = Self;
 
 	const DETAIL: Option<&'static str> = None;
 }
@@ -82,8 +83,9 @@ pub trait BuildableSignal: Signal {
 	fn builder<F: FnOnce(SignalBuilder) -> glib::subclass::Signal>(f: F) -> glib::subclass::Signal;
 }
 
-impl<T: Signal> BuildableSignal for T where
-	<Self::Return as ToValueOption>::Type: StaticType
+impl<T: Signal> BuildableSignal for T
+where
+	<Self::Return as ToValueOption>::Type: StaticType,
 {
 	fn builder<F: FnOnce(SignalBuilder) -> glib::subclass::Signal>(f: F) -> glib::subclass::Signal {
 		let builder = glib::subclass::Signal::builder(Self::NAME)
@@ -101,8 +103,7 @@ pub trait BuildSignal: BuildableSignal {
 }
 
 #[cfg_attr(feature = "dox", doc(notable_trait))]
-pub trait Notifies<T: Signal>: ObjectType {
-}
+pub trait Notifies<T: Signal>: ObjectType {}
 
 #[derive(Copy, Clone, Debug)]
 pub struct ConnectDetails<S = ()> {
@@ -123,9 +124,7 @@ impl<S> ConnectDetails<S> {
 	}
 
 	pub fn normalize(&self) -> ConnectDetails<()> {
-		unsafe {
-			ConnectDetails::with_parts(self.signal(), self.detail(), self.run_after)
-		}
+		unsafe { ConnectDetails::with_parts(self.signal(), self.detail(), self.run_after) }
 	}
 
 	pub fn signal(&self) -> SignalId {
@@ -171,9 +170,7 @@ impl<S: Signal> ConnectDetails<S> {
 impl ConnectDetails<()> {
 	pub fn with_name<O: StaticType>(signal: &str, after: bool) -> Option<Self> {
 		let (signal, detail) = SignalId::parse_name(signal, O::static_type(), false)?;
-		Some(unsafe {
-			Self::with_parts(signal, detail, after)
-		})
+		Some(unsafe { Self::with_parts(signal, detail, after) })
 	}
 }
 
@@ -193,21 +190,24 @@ pub trait ObjectSignalExt: ObjectType {
 	unsafe fn handle_closure(&self, signal: &ConnectDetails, callback: &Closure) -> Result<SignalHandlerId, BoolError>;
 	fn remove_handle(&self, handle: SignalHandlerId);
 
-	fn handle<S, S_, C>(&self, signal: S_, callback: C) -> SignalHandlerId where
+	fn handle<S, S_, C>(&self, signal: S_, callback: C) -> SignalHandlerId
+	where
 		C: Fn(&Self, S::Arguments) -> <S::Return as ToValueOption>::Type,
 		S: DetailedSignal,
 		S_: Into<ConnectDetails<S>>,
 		Self: Notifies<S::Signal>;
 
 	#[cfg(feature = "futures")]
-	fn signal_stream<S, S_>(&self, signal: S_) -> SignalStream<Self, S::Arguments> where
+	fn signal_stream<S, S_>(&self, signal: S_) -> SignalStream<Self, S::Arguments>
+	where
 		S: DetailedSignal,
 		S_: Into<ConnectDetails<S>>,
 		Self: Notifies<S::Signal>,
 		<S::Return as ToValueOption>::Type: Default;
 }
 
-impl<O: ObjectType> ObjectSignalExt for O where
+impl<O: ObjectType> ObjectSignalExt for O
+where
 	for<'a> BorrowedObject<'a, O>: FromValue<'a>,
 {
 	unsafe fn handle_closure(&self, signal: &ConnectDetails, callback: &Closure) -> Result<SignalHandlerId, BoolError> {
@@ -219,12 +219,17 @@ impl<O: ObjectType> ObjectSignalExt for O where
 			signal.run_after.into_glib(),
 		);
 		match handle {
-			0 => Err(glib::bool_error!("failed to connect signal {:?} of type {:?}", signal, Self::static_type())),
+			0 => Err(glib::bool_error!(
+				"failed to connect signal {:?} of type {:?}",
+				signal,
+				Self::static_type()
+			)),
 			handle => Ok(from_glib(handle)),
 		}
 	}
 
-	fn handle<S, S_, C>(&self, signal: S_, callback: C) -> SignalHandlerId where
+	fn handle<S, S_, C>(&self, signal: S_, callback: C) -> SignalHandlerId
+	where
 		C: Fn(&Self, S::Arguments) -> <S::Return as ToValueOption>::Type,
 		S: DetailedSignal,
 		S_: Into<ConnectDetails<S>>,
@@ -247,7 +252,8 @@ impl<O: ObjectType> ObjectSignalExt for O where
 	}
 
 	#[cfg(feature = "futures")]
-	fn signal_stream<S, S_>(&self, signal: S_) -> SignalStream<Self, S::Arguments> where
+	fn signal_stream<S, S_>(&self, signal: S_) -> SignalStream<Self, S::Arguments>
+	where
 		S: DetailedSignal,
 		S_: Into<ConnectDetails<S>>,
 		Self: Notifies<S::Signal>,

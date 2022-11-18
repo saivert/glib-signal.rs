@@ -1,14 +1,12 @@
-use glib::{Value, ObjectExt, WeakRef, ObjectType, Closure, SignalHandlerId, value::FromValue, g_warning};
-use futures_core::{Stream, FusedStream, FusedFuture, ready};
-use futures_channel::mpsc;
-use std::hint::unreachable_unchecked;
-use std::{fmt, io, ptr};
-use std::error::Error;
-use std::{pin::Pin, mem::ManuallyDrop};
-use std::task::Poll;
-use std::future::Future;
-
-use crate::{ConnectDetails, FromValues, ToValueOption, BorrowedObject, DetailedSignal, ObjectSignalExt};
+use {
+	crate::{BorrowedObject, ConnectDetails, DetailedSignal, FromValues, ObjectSignalExt, ToValueOption},
+	futures_channel::mpsc,
+	futures_core::{ready, FusedFuture, FusedStream, Stream},
+	glib::{g_warning, value::FromValue, Closure, ObjectExt, ObjectType, SignalHandlerId, Value, WeakRef},
+	std::{
+		error::Error, fmt, future::Future, hint::unreachable_unchecked, io, mem::ManuallyDrop, pin::Pin, ptr, task::Poll,
+	},
+};
 
 #[must_use]
 #[cfg_attr(feature = "dox", doc(cfg(feature = "futures")))]
@@ -20,8 +18,9 @@ pub struct SignalStream<O: ObjectType, T> {
 }
 
 impl<O: ObjectType, T> SignalStream<O, T> {
-	pub fn connect<F, S>(target: &O, signal: ConnectDetails<S>, res: F) -> Self where
-		S: DetailedSignal<Arguments=T>,
+	pub fn connect<F, S>(target: &O, signal: ConnectDetails<S>, res: F) -> Self
+	where
+		S: DetailedSignal<Arguments = T>,
 		T: for<'a> FromValues<'a> + 'static,
 		F: Fn(&O, &T) -> <<S as DetailedSignal>::Return as ToValueOption>::Type + 'static,
 		for<'a> BorrowedObject<'a, O>: FromValue<'a>,
@@ -40,9 +39,7 @@ impl<O: ObjectType, T> SignalStream<O, T> {
 			}
 			res.into().to_value_option()
 		};
-		let handle = unsafe {
-			target.handle_closure(&signal.normalize(), &Closure::new_unsafe(callback))
-		}.unwrap();
+		let handle = unsafe { target.handle_closure(&signal.normalize(), &Closure::new_unsafe(callback)) }.unwrap();
 
 		SignalStream {
 			rx,
@@ -66,9 +63,7 @@ impl<O: ObjectType, T> SignalStream<O, T> {
 	pub fn into_target(self) -> WeakRef<O> {
 		let mut this = ManuallyDrop::new(self);
 		this.disconnect();
-		unsafe {
-			ptr::read(&this.target)
-		}
+		unsafe { ptr::read(&this.target) }
 	}
 
 	pub fn target(&self) -> &WeakRef<O> {
@@ -114,7 +109,7 @@ impl fmt::Display for ConnectEof {
 	}
 }
 
-impl Error for ConnectEof { }
+impl Error for ConnectEof {}
 
 impl From<ConnectEof> for io::Error {
 	fn from(eof: ConnectEof) -> Self {
@@ -134,9 +129,7 @@ pub struct OnceFuture<O: ObjectType, T> {
 
 impl<O: ObjectType, T> OnceFuture<O, T> {
 	pub fn new(stream: SignalStream<O, T>) -> Self {
-		Self {
-			stream: Some(stream),
-		}
+		Self { stream: Some(stream) }
 	}
 
 	/// check `is_terminated` first!
@@ -181,9 +174,7 @@ pub struct SignalStreamSelf<O: ObjectType, T> {
 
 impl<O: ObjectType, T> From<SignalStream<O, T>> for SignalStreamSelf<O, T> {
 	fn from(inner: SignalStream<O, T>) -> Self {
-		Self {
-			inner,
-		}
+		Self { inner }
 	}
 }
 
@@ -192,9 +183,7 @@ impl<O: ObjectType, T> Stream for SignalStreamSelf<O, T> {
 
 	fn poll_next(self: Pin<&mut Self>, cx: &mut std::task::Context<'_>) -> Poll<Option<Self::Item>> {
 		let mut inner = unsafe { self.map_unchecked_mut(|s| &mut s.inner) };
-		Poll::Ready(ready!(inner.as_mut().poll_next(cx))
-			.map(|res| (inner.target().upgrade(), res))
-		)
+		Poll::Ready(ready!(inner.as_mut().poll_next(cx)).map(|res| (inner.target().upgrade(), res)))
 	}
 
 	fn size_hint(&self) -> (usize, Option<usize>) {

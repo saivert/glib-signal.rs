@@ -1,5 +1,4 @@
-use examples::*;
-use glib_signal::ObjectSignalExt;
+use {examples::*, glib_signal::ObjectSignalExt};
 
 #[test]
 fn simple_signals() {
@@ -18,7 +17,7 @@ fn simple_signals() {
 	});
 
 	let len = obj.something("whee", false);
-	assert_eq!(len, 4*2);
+	assert_eq!(len, 4 * 2);
 	/* TODO: enable once https://github.com/gtk-rs/gtk-rs-core/issues/460 is fixed
 	let len = obj.something("whee", true);
 	assert_eq!(len, 4*2*2);*/

@@ -1,31 +1,33 @@
-use glib::ToValue;
-use glib_signal::{Signal, SignalFlags, BuildSignal, BuildableSignal, DetailedSignal};
+use {
+	glib::ToValue,
+	glib_signal::{BuildSignal, BuildableSignal, DetailedSignal, Signal, SignalFlags},
+};
 
 mod imp {
-	use glib::{subclass::{types::ObjectSubclass, signal::Signal, object::ObjectImpl}, once_cell::sync::OnceCell};
-	use glib_signal::BuildSignal as _;
+	use {
+		glib::{
+			once_cell::sync::OnceCell,
+			subclass::{object::ObjectImpl, signal::Signal, types::ObjectSubclass},
+		},
+		glib_signal::BuildSignal as _,
+	};
 
 	#[derive(Default)]
-	pub struct TestObject {
-	}
+	pub struct TestObject {}
 
 	#[glib::object_subclass]
 	impl ObjectSubclass for TestObject {
-		const NAME: &'static str = "TestObject";
-
-		type Type = super::TestObject;
-		type ParentType = glib::Object;
-
 		type Interfaces = ();
+		type ParentType = glib::Object;
+		type Type = super::TestObject;
+
+		const NAME: &'static str = "TestObject";
 	}
 
 	impl ObjectImpl for TestObject {
 		fn signals() -> &'static [Signal] {
 			static SIGNALS: OnceCell<[Signal; 2]> = OnceCell::new();
-			SIGNALS.get_or_init(|| [
-					super::TestObjectSomething::build(),
-					super::TestObjectNothing::build(),
-			])
+			SIGNALS.get_or_init(|| [super::TestObjectSomething::build(), super::TestObjectNothing::build()])
 		}
 	}
 }
@@ -77,18 +79,18 @@ glib_signal::def_signal! {
 #[derive(Copy, Clone, Debug)]
 pub struct TestObjectSomethingElse;
 impl DetailedSignal for TestObjectSomethingElse {
-	type Signal = TestObjectSomething;
-	type Object = <TestObjectSomething as Signal>::Object;
 	type Arguments = <TestObjectSomething as Signal>::Arguments;
+	type Object = <TestObjectSomething as Signal>::Object;
 	type Return = <TestObjectSomething as Signal>::Return;
+	type Signal = TestObjectSomething;
 
 	const DETAIL: Option<&'static str> = Some("else");
 }
 
 impl BuildSignal for TestObjectSomething {
 	fn build() -> glib::subclass::Signal {
-		Self::builder(|b| b
-			.accumulator(|cx, lhs, rhs| {
+		Self::builder(|b| {
+			b.accumulator(|cx, lhs, rhs| {
 				if cx.detail() == Some(TestObjectSomethingElse::create_detail()) {
 					*lhs = (lhs.get::<u64>().unwrap() + rhs.get::<u64>().unwrap() * 2).to_value();
 				} else {
@@ -97,6 +99,6 @@ impl BuildSignal for TestObjectSomething {
 				true
 			})
 			.build()
-		)
+		})
 	}
 }

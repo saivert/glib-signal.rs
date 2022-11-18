@@ -1,12 +1,18 @@
-use glib::{Type, StaticType, Value};
-use glib::value::{FromValue, ValueTypeChecker, ValueTypeMismatchOrNoneError, ValueTypeMismatchError};
-use std::error::Error;
+use {
+	glib::{
+		value::{FromValue, ValueTypeChecker, ValueTypeMismatchError, ValueTypeMismatchOrNoneError},
+		StaticType, Type, Value,
+	},
+	std::error::Error,
+};
 
 pub trait FromValues<'a> {
 	type Error: Error;
-	type Types: IntoIterator<Item=Type>;
+	type Types: IntoIterator<Item = Type>;
 
-	fn from_values(args: &'a [Value]) -> Result<Self, Self::Error> where Self: Sized;
+	fn from_values(args: &'a [Value]) -> Result<Self, Self::Error>
+	where
+		Self: Sized;
 	fn static_types() -> Self::Types;
 }
 
