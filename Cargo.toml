@@ -1,6 +1,6 @@
 [package]
 name = "glib-signal"
-version = "0.1.0"
+version = "0.1.0" # keep in sync with html_root_url
 authors = ["arcnmx"]
 edition = "2021"
 rust-version = "1.60"
@@ -8,8 +8,8 @@ rust-version = "1.60"
 description = "GObject signal bindings"
 keywords = ["glib", "gobject", "signal", "async", "futures"]
 
-documentation = "http://docs.rs/glib-signals/"
-repository = "https://github.com/arcnmx/glib-signals.rs"
+documentation = "http://docs.rs/glib-signal/"
+repository = "https://github.com/arcnmx/glib-signal.rs"
 readme = "README.md"
 license = "MIT"
 
