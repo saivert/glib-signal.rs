@@ -121,7 +121,7 @@
       ];
     };
     config = rec {
-      name = "ddcset-rs";
+      name = "glib-signal";
       packages.namespace = [ name ];
       inputs.arc = {
         lib.namespace = [ "arc" ];
