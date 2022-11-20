@@ -34,14 +34,16 @@
           (writeShellScriptBin "generate" ''nix run .#generate "$@"'')
         ] ++ nixlib.optional enableRust cargo;
       };
-      stable = { rust'stable, rust'latest, outputs'devShells'plain }: let
-        stable = if impure then rust'stable else rust'latest;
-      in outputs'devShells'plain.override {
-        inherit (stable) mkShell;
+      stable = { rust'stable, outputs'devShells'plain }: outputs'devShells'plain.override {
+        inherit (rust'stable) mkShell;
         enableRust = false;
       };
-      dev = { arc'rustPlatforms'nightly, outputs'devShells'plain }: outputs'devShells'plain.override {
-        inherit (arc'rustPlatforms'nightly.hostChannel) mkShell;
+      dev = { arc'rustPlatforms'nightly, rust'distChannel, outputs'devShells'plain }: let
+        channel = rust'distChannel {
+          inherit (arc'rustPlatforms'nightly) channel date manifestPath;
+        };
+      in outputs'devShells'plain.override {
+        inherit (channel) mkShell;
         enableRust = false;
         rustTools = [ "rust-analyzer" ];
       };
@@ -123,10 +125,6 @@
     config = rec {
       name = "glib-signal";
       packages.namespace = [ name ];
-      inputs.arc = {
-        lib.namespace = [ "arc" ];
-        packages.namespace = [ "arc" ];
-      };
     };
   };
 }
