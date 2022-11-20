@@ -4,7 +4,10 @@ in {
   config = {
     name = "glib-signal.rs";
     ci.gh-actions.enable = true;
-    cache.cachix.arc.enable = true;
+    cache.cachix = {
+      ci.signingKey = "";
+      arc.enable = true;
+    };
     channels = {
       nixpkgs = "22.11";
     };
