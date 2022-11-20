@@ -1,0 +1,16 @@
+= GLib Signals
+:crate: glib-signal
+:relative-blob:
+:url-glib: https://crates.io/crates/glib
+:url-docs: https://docs.rs/{crate}/
+:url-crates: https://crates.io/crates/{crate}
+:badge-crates: https://img.shields.io/crates/v/{crate}.svg?style=flat-square
+:badge-docs: https://img.shields.io/badge/API-docs-blue.svg?style=flat-square
+:badge-license: https://img.shields.io/badge/license-MIT-ff69b4.svg?style=flat-square
+
+link:{url-crates}[image:{badge-crates}["latest release",title="crates.io"]]
+link:{url-docs}[image:{badge-docs}["docs",title="API documentation"]]
+link:{relative-blob}COPYING[image:{badge-license}["MIT",title="License"]]
+
+Convenient macros and helpers for handling {url-glib}[GObject] signals in async code.
+See the {url-docs}[crate documentation] for more information.

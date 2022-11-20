@@ -10,8 +10,14 @@ keywords = ["glib", "gobject", "signal", "async", "futures"]
 
 documentation = "http://docs.rs/glib-signal/"
 repository = "https://github.com/arcnmx/glib-signal.rs"
-readme = "README.md"
+readme = "src/README.md"
 license = "MIT"
+
+include = [
+	"/src",
+	"/README*",
+	"/COPYING*",
+]
 
 [package.metadata.docs.rs]
 features = ["dox", "futures"]

@@ -10,6 +10,7 @@ in {
     };
     tasks = {
       rustfmt.inputs = singleton checks.rustfmt;
+      readme.inputs = singleton checks.readme;
       build.inputs = singleton checks.test;
       example.inputs = [
         checks.example-async
