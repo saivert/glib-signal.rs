@@ -14,9 +14,10 @@ readme = "src/README.md"
 license = "MIT"
 
 include = [
-	"/src",
+	"/src/**",
 	"/README*",
 	"/COPYING*",
+	"/.rustfmt.toml",
 ]
 
 [package.metadata.docs.rs]

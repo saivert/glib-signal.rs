@@ -12,7 +12,7 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
   };
-  outputs = { self, flakelib, nixpkgs, ... }@inputs: let
+  outputs = { self, flakelib, nixpkgs, rust, ... }@inputs: let
     nixlib = nixpkgs.lib;
     impure = builtins ? currentSystem;
   in flakelib {
@@ -85,11 +85,7 @@
       };
     };
     legacyPackages = { callPackageSet }: callPackageSet {
-      source = { rust'builders }: rust'builders.linkSources {
-        path = ./.;
-        inherit (self) outPath;
-        inherit (self.lib) srcs;
-      };
+      source = { rust'builders }: rust'builders.wrapSource self.lib.cargoToml.src;
 
       readme = { rust'builders }: rust'builders.adoc2md {
         src = ./README.adoc;
@@ -109,7 +105,7 @@
       };
     } { };
     lib = with nixlib; {
-      cargoToml = nixlib.importTOML ./Cargo.toml;
+      cargoToml = rust.lib.importCargo ./Cargo.toml;
       inherit (self.lib.cargoToml.package) version;
       releaseTag = "v${self.lib.version}";
       path = ./.;
