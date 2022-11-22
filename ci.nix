@@ -14,6 +14,7 @@ in {
     tasks = {
       rustfmt.inputs = singleton checks.rustfmt;
       readme.inputs = singleton checks.readme;
+      version.inputs = singleton checks.version;
       build.inputs = singleton checks.test;
       example.inputs = [
         checks.example-async

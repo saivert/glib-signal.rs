@@ -57,6 +57,14 @@
         expected = readme;
         src = ./src/README.md;
       };
+      version = { rust'builders, source }: rust'builders.check-contents {
+        src = source;
+        patterns = [
+          { path = "src/lib.rs"; docs'rs = {
+            inherit (self.lib.cargoToml.package) name version;
+          }; }
+        ];
+      };
       test = { outputs'devShells'plain, rustPlatform, source }: rustPlatform.buildRustPackage {
         pname = self.lib.cargoToml.package.name;
         inherit (self.lib.cargoToml.package) version;
