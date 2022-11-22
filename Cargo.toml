@@ -17,7 +17,6 @@ include = [
 	"/src/**",
 	"/README*",
 	"/COPYING*",
-	"/.rustfmt.toml",
 ]
 
 [package.metadata.docs.rs]

@@ -52,6 +52,7 @@
     checks = {
       rustfmt = { rust'builders, source }: rust'builders.check-rustfmt-unstable {
         src = source;
+        config = ./.rustfmt.toml;
       };
       readme = { rust'builders, readme }: rust'builders.check-generate {
         expected = readme;
