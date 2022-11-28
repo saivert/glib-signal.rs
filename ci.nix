@@ -19,6 +19,9 @@ in {
       example.inputs = [
         checks.example-async
       ];
+      docs.inputs = [
+        checks.docs
+      ];
     };
   };
 }
