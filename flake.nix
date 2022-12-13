@@ -7,14 +7,9 @@
       url = "github:arcnmx/nixexprs-rust";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    arc = {
-      url = "github:arcnmx/nixexprs";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
   };
   outputs = { self, flakelib, nixpkgs, rust, ... }@inputs: let
     nixlib = nixpkgs.lib;
-    impure = builtins ? currentSystem;
   in flakelib {
     inherit inputs;
     systems = [ "x86_64-linux" "aarch64-linux" "x86_64-darwin" "aarch64-darwin" ];
@@ -48,12 +43,9 @@
         inherit (rust'stable) mkShell;
         enableRust = false;
       };
-      dev = { arc'rustPlatforms'nightly, rust'distChannel, outputs'devShells'plain }: let
-        channel = rust'distChannel {
-          inherit (arc'rustPlatforms'nightly) channel date manifestPath;
-        };
+      dev = { rust'unstable, outputs'devShells'plain }: let
       in outputs'devShells'plain.override {
-        inherit (channel) mkShell;
+        inherit (rust'unstable) mkShell;
         enableRust = false;
         enableRustdoc = true;
         rustTools = [ "rust-analyzer" ];
@@ -140,15 +132,6 @@
       crate = rust.lib.importCargo ./Cargo.toml;
       inherit (self.lib.crate.package) version;
       releaseTag = "v${self.lib.version}";
-      path = ./.;
-      srcs = filesystem.listFilesRecursive ./src
-      ++ filesystem.listFilesRecursive ./examples
-      ++ [
-        ./Cargo.toml
-        ./Cargo.lock
-        ./README.adoc
-        ./.rustfmt.toml
-      ];
     };
     config = rec {
       name = "glib-signal";
