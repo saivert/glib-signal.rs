@@ -1,4 +1,4 @@
-#![doc(html_root_url = "https://docs.rs/glib-signal/0.1.0/")]
+#![doc(html_root_url = "https://docs.rs/glib-signal/0.2.0/")]
 #![cfg_attr(feature = "dox", feature(doc_notable_trait, doc_cfg))]
 
 #[cfg(feature = "futures")]
