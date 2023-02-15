@@ -1,4 +1,4 @@
-use {examples::TestObject, futures::StreamExt, glib::MainLoop, glib_signal::ObjectSignalExt};
+use {glib_signal_examples::TestObject, futures::StreamExt, glib::MainLoop, glib_signal::ObjectSignalExt};
 
 async fn main_async(mainloop: MainLoop) {
 	let obj = TestObject::new();

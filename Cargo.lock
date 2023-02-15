@@ -46,16 +46,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "examples"
-version = "0.0.0"
-dependencies = [
- "ctrlc",
- "futures",
- "glib",
- "glib-signal",
-]
-
-[[package]]
 name = "futures"
 version = "0.3.25"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -202,6 +192,16 @@ dependencies = [
  "futures-channel",
  "futures-core",
  "glib",
+]
+
+[[package]]
+name = "glib-signal-examples"
+version = "0.0.0"
+dependencies = [
+ "ctrlc",
+ "futures",
+ "glib",
+ "glib-signal",
 ]
 
 [[package]]

@@ -94,7 +94,7 @@
         installCheckPhase = ''
           $out/bin/async
         '';
-        meta.name = "cargo test --workspace && cargo run -p examples --bin async";
+        meta.name = "cargo test --workspace && cargo run -p glib-signal-examples --bin async";
       };
     };
     legacyPackages = { callPackageSet }: callPackageSet {

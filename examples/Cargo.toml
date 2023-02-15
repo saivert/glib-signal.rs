@@ -1,8 +1,9 @@
 [package]
-name = "examples"
+name = "glib-signal-examples"
 version = "0.0.0"
 authors = ["arcnmx"]
 edition = "2018"
+publish = false
 
 [dependencies]
 glib-signal = { version = "0.1", features = ["futures"], path = "../" }
