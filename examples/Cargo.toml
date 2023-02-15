@@ -8,5 +8,5 @@ publish = false
 [dependencies]
 glib-signal = { version = "0.1", features = ["futures"], path = "../" }
 futures = "0.3"
-glib = { version = "0.16" }
+glib = { version = "0.17" }
 ctrlc = { version = "3.0", features = ["termination"] }
