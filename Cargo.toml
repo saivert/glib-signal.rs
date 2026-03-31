@@ -28,7 +28,7 @@ rustdoc-args = ["--cfg", "docsrs", "--generate-link-to-definition"]
 maintenance = { status = "passively-maintained" }
 
 [dependencies]
-glib = { version = "0.19" }
+glib = { version = "0.21" }
 futures-core = { version = "0.3", optional = true }
 futures-channel = { version = "0.3", optional = true }
 

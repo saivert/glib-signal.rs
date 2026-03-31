@@ -8,6 +8,6 @@ publish = false
 [dependencies]
 glib-signal = { version = "0.4", features = ["futures"], path = "../" }
 futures = "0.3"
-glib = { version = "0.19" }
+glib = { version = "0.21" }
 ctrlc = { version = "3.0", features = ["termination"] }
 once_cell = { version = "1.19" }

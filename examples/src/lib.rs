@@ -90,11 +90,10 @@ impl BuildSignal for TestObjectSomething {
 		Self::builder(|b| {
 			b.accumulator(|cx, lhs, rhs| {
 				if cx.detail() == Some(TestObjectSomethingElse::create_detail()) {
-					*lhs = (lhs.get::<u64>().unwrap() + rhs.get::<u64>().unwrap() * 2).to_value();
+					std::ops::ControlFlow::Continue((lhs.get::<u64>().unwrap() + rhs.get::<u64>().unwrap() * 2).to_value())
 				} else {
-					*lhs = (lhs.get::<u64>().unwrap() + rhs.get::<u64>().unwrap()).to_value();
+					std::ops::ControlFlow::Continue((lhs.get::<u64>().unwrap() + rhs.get::<u64>().unwrap()).to_value())
 				}
-				true
 			})
 			.build()
 		})
