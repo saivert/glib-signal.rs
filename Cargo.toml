@@ -3,7 +3,7 @@ name = "glib-signal"
 version = "0.4.0" # keep in sync with html_root_url
 authors = ["arcnmx"]
 edition = "2021"
-rust-version = "1.70"
+rust-version = "1.92"
 
 description = "GObject signal bindings"
 keywords = ["glib", "gobject", "signal", "async", "futures"]
@@ -28,7 +28,7 @@ rustdoc-args = ["--cfg", "docsrs", "--generate-link-to-definition"]
 maintenance = { status = "passively-maintained" }
 
 [dependencies]
-glib = { version = "0.21" }
+glib = { version = "0.22" }
 futures-core = { version = "0.3", optional = true }
 futures-channel = { version = "0.3", optional = true }
 
